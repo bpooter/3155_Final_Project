@@ -1,0 +1,66 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# =========================
+# Virtual Environments
+# =========================
+venv/
+env/
+.env/
+.venv/
+
+# =========================
+# Configuration / Secrets
+# =========================
+api/dependencies/config.py
+
+# =========================
+# PyCharm
+# =========================
+.idea/
+
+# =========================
+# VS Code (optional)
+# =========================
+.vscode/
+
+# =========================
+# FastAPI / Python packaging
+# =========================
+dist/
+build/
+*.egg-info/
+
+# =========================
+# Environment variables (VERY IMPORTANT)
+# =========================
+.env
+.config
+
+# =========================
+# Databases (common in class SQL work)
+# =========================
+*.db
+*.sqlite3
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OS files (macOS)
+# =========================
+.DS_Store
+
+# =========================
+# Testing / cache
+# =========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
