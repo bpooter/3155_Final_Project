@@ -1,14 +1,22 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DECIMAL, DATETIME
+from enum import Enum
+
+from sqlalchemy import Column, Integer, String, DECIMAL, Enum as SQLEnum
 from sqlalchemy.orm import relationship
-from datetime import datetime
+
 from ..dependencies.database import Base
 
+
+class Unit(str, Enum):
+    EACH = "each"
+    SLICE = "slice"
+    OUNCE = "ounce"
+    POUND = "pound"
 
 class Resource(Base):
     __tablename__ = "resources"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    item = Column(String(100), unique=True, nullable=False)
-    amount = Column(Integer, index=True, nullable=False, server_default='0.0')
-
+    resource_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    item_name = Column(String(100), unique=True, nullable=False)
+    quantity_on_hand = Column(DECIMAL(10,2), index=True, nullable=False, server_default='0.00')
+    unit = Column(SQLEnum(Unit), nullable=False)
     recipes = relationship("Recipe", back_populates="resource")
