@@ -7,10 +7,11 @@ from .order_details import OrderDetail
 
 
 class OrderBase(BaseModel):
+    customer_id: Optional[int] = None
     guest_name: Optional[str] = None
     guest_email: Optional[str] = None
     guest_phone: Optional[str] = None
-    promotion_id: Optional[int] = None
+    promotion_code: Optional[str] = None
 
 
 class OrderCreate(OrderBase):
@@ -22,10 +23,10 @@ class OrderUpdate(BaseModel):
     guest_email: Optional[str] = None
     guest_phone: Optional[str] = None
     order_status: Optional[str] = None
-    promotion_id: Optional[int] = None
+    promotion_code: Optional[str] = None
 
 class Order(OrderBase):
-    id: int
+    order_id: int
     customer_id: Optional[int] = None
     order_date: datetime
     order_status: str

@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .sandwiches import Sandwich
 
 '''
@@ -18,8 +18,9 @@ id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
 class OrderDetailBase(BaseModel):
+    order_id: int
     menu_item_id: int
-    quantity: int
+    quantity: int = Field(gt=0)
     special_instructions: Optional[str] = None
 
 
@@ -32,8 +33,7 @@ class OrderDetailUpdate(BaseModel):
 
 
 class OrderDetail(OrderDetailBase):
-    id: int
-    order_id: int
+    order_detail_id: int
     unit_price: Decimal
 
     class ConfigDict:

@@ -12,7 +12,7 @@ class MenuCategory(str, Enum):
     DESSERT = "dessert"
 
 class MenuItemBase(BaseModel):
-    name: str
+    item_name: str
     description: Optional[str] = None
     price: Decimal
     calories: Optional[int] = None
@@ -22,7 +22,7 @@ class MenuItemCreate(MenuItemBase):
     pass
 
 class MenuItemUpdate(MenuItemBase):
-    name: Optional[str] = None
+    item_name: Optional[str] = None
     description: Optional[str] = None
     price: Optional[Decimal] = None
     calories: Optional[int] = None

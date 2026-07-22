@@ -14,3 +14,4 @@ class Customer(Base):
     address = Column(String(255), nullable=False)
 
     orders = relationship("Order", back_populates="customer")
+    reviews = relationship("Review", back_populates="customer", cascade="all, delete-orphan")

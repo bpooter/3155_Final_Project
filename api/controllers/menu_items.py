@@ -1,36 +1,21 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response
 
-from ..models import order_details as model
-from ..models import menu_items
+from ..models import menu_items as model
 from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
+
+    new_item = model.MenuItem(
+        item_name=request.item_name,
+        description=request.description,
+        price=request.price,
+        calories=request.calories,
+        category=request.category
+    )
+
     try:
-        # Verify menu item exists
-        menu_item = (
-            db.query(menu_items.MenuItem)
-            .filter(
-                menu_items.MenuItem.menu_item_id == request.menu_item_id
-            )
-            .first()
-        )
-
-        if not menu_item:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Menu item not found!"
-            )
-
-        new_item = model.OrderDetail(
-            order_id=request.order_id,
-            menu_item_id=request.menu_item_id,
-            quantity=request.quantity,
-            unit_price=menu_item.price,
-            special_instructions=request.special_instructions
-        )
-
         db.add(new_item)
         db.commit()
         db.refresh(new_item)
@@ -46,8 +31,9 @@ def create(db: Session, request):
 
 
 def read_all(db: Session):
+
     try:
-        result = db.query(model.OrderDetail).all()
+        result = db.query(model.MenuItem).all()
 
     except SQLAlchemyError as e:
         raise HTTPException(
@@ -58,12 +44,13 @@ def read_all(db: Session):
     return result
 
 
-def read_one(db: Session, order_detail_id):
+def read_one(db: Session, menu_item_id):
+
     try:
         item = (
-            db.query(model.OrderDetail)
+            db.query(model.MenuItem)
             .filter(
-                model.OrderDetail.order_detail_id == order_detail_id
+                model.MenuItem.menu_item_id == menu_item_id
             )
             .first()
         )
@@ -71,7 +58,7 @@ def read_one(db: Session, order_detail_id):
         if not item:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Order detail not found!"
+                detail="Menu item not found!"
             )
 
     except SQLAlchemyError as e:
@@ -83,12 +70,33 @@ def read_one(db: Session, order_detail_id):
     return item
 
 
-def update(db: Session, order_detail_id, request):
+def read_by_category(db: Session, category):
+
+    try:
+        items = (
+            db.query(model.MenuItem)
+            .filter(
+                model.MenuItem.category == category
+            )
+            .all()
+        )
+
+    except SQLAlchemyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+    return items
+
+
+def update(db: Session, menu_item_id, request):
+
     try:
         item = (
-            db.query(model.OrderDetail)
+            db.query(model.MenuItem)
             .filter(
-                model.OrderDetail.order_detail_id == order_detail_id
+                model.MenuItem.menu_item_id == menu_item_id
             )
             .first()
         )
@@ -96,7 +104,7 @@ def update(db: Session, order_detail_id, request):
         if not item:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Order detail not found!"
+                detail="Menu item not found!"
             )
 
         update_data = request.model_dump(exclude_unset=True)
@@ -117,12 +125,13 @@ def update(db: Session, order_detail_id, request):
     return item
 
 
-def delete(db: Session, order_detail_id):
+def delete(db: Session, menu_item_id):
+
     try:
         item = (
-            db.query(model.OrderDetail)
+            db.query(model.MenuItem)
             .filter(
-                model.OrderDetail.order_detail_id == order_detail_id
+                model.MenuItem.menu_item_id == menu_item_id
             )
             .first()
         )
@@ -130,7 +139,7 @@ def delete(db: Session, order_detail_id):
         if not item:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Order detail not found!"
+                detail="Menu item not found!"
             )
 
         db.delete(item)
