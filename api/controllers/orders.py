@@ -1,3 +1,5 @@
+import random
+import string
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response
 
@@ -5,8 +7,13 @@ from ..models.promotions import Promotion
 from ..models import orders as model
 from sqlalchemy.exc import SQLAlchemyError
 
+def generate_tracking_number():
+    return "ITIS-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 def create(db: Session, request):
+
+    print(f"Promotion code from request: '{request.promotion_code}'")
+
     try:
         promotion = None
 
@@ -24,8 +31,10 @@ def create(db: Session, request):
                 )
 
         new_order = model.Order(
+            tracking_number=generate_tracking_number(),
             customer_id=request.customer_id,
             guest_name=request.guest_name,
+            order_type=request.order_type,
             guest_email=request.guest_email,
             guest_phone=request.guest_phone,
             promotion_id=promotion.promotion_id if promotion else None

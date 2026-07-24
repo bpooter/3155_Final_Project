@@ -2,30 +2,29 @@ from fastapi import HTTPException, status, Response
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import Session
 
-from ..models import promotions as model
-from ..schemas.promotions import PromotionCreate, PromotionUpdate
+from ..models import reviews as model
+from ..schemas.reviews import ReviewCreate, ReviewUpdate
 
 
-def create(request: PromotionCreate, db: Session):
+def create(request: ReviewCreate, db: Session):
 
-    new_promotion = model.Promotion(
-        promotion_code=request.promotion_code,
-        discount_type=request.discount_type,
-        discount_amount=request.discount_amount,
-        discount_item=request.discount_item,
-        expiration_date=request.expiration_date
+    new_review = model.Review(
+        customer_id=request.customer_id,
+        order_id=request.order_id,
+        rating=request.rating,
+        comment=request.comment
     )
 
     try:
-        db.add(new_promotion)
+        db.add(new_review)
         db.commit()
-        db.refresh(new_promotion)
+        db.refresh(new_review)
 
     except IntegrityError:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail= "Promotion code already exists"
+            detail= "Review already exists for that order"
         )
 
     except SQLAlchemyError as e:
@@ -35,55 +34,55 @@ def create(request: PromotionCreate, db: Session):
             detail=str(e)
         )
 
-    return new_promotion
+    return new_review
 
 def read_all(db: Session):
-    return db.query(model.Promotion).all()
+    return db.query(model.Review).all()
 
-def read_one(promotion_id: int, db: Session):
+def read_one(review_id: int, db: Session):
 
-    promotion = (
-        db.query(model.Promotion)
-        .filter(model.Promotion.promotion_id == promotion_id)
+    review = (
+        db.query(model.Review)
+        .filter(model.Review.review_id == review_id)
         .first()
     )
 
-    if not promotion:
+    if not review:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Promotion with id {promotion_id} not found"
+            detail=f"Review with id {review_id} not found"
         )
 
-    return promotion
+    return review
 
 def update(
-    promotion_id: int,
-    request: PromotionUpdate,
+    review_id: int,
+    request: ReviewUpdate,
     db: Session
 ):
 
     try:
-        promotion = (
-            db.query(model.Promotion)
+        review = (
+            db.query(model.Review)
             .filter(
-                model.Promotion.promotion_id == promotion_id
+                model.Review.review_id == review_id
             )
             .first()
         )
 
-        if not promotion:
+        if not review:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Promotion not found"
+                detail="Review not found"
             )
 
         update_data = request.model_dump(exclude_unset=True)
 
         for key, value in update_data.items():
-            setattr(promotion, key, value)
+            setattr(review, key, value)
 
         db.commit()
-        db.refresh(promotion)
+        db.refresh(review)
 
     except SQLAlchemyError as e:
         db.rollback()
@@ -92,26 +91,26 @@ def update(
             detail=str(e)
         )
 
-    return promotion
+    return review
 
-def delete(promotion_id: int, db: Session):
+def delete(review_id: int, db: Session):
 
     try:
-        promotion = (
-            db.query(model.Promotion)
+        review = (
+            db.query(model.Review)
             .filter(
-                model.Promotion.promotion_id == promotion_id
+                model.Review.review_id == review_id
             )
             .first()
         )
 
-        if not promotion:
+        if not review:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Promotion not found"
+                detail="Review not found"
             )
 
-        db.delete(promotion)
+        db.delete(review)
         db.commit()
 
     except SQLAlchemyError as e:

@@ -22,7 +22,7 @@ class PromotionCreate(PromotionBase):
 class PromotionUpdate(BaseModel):
     promotion_code: Optional[str] = None #Potentially optional when updating
     discount_type: Optional[DiscountType] = None
-    discount_amount: Optional[float] = None
+    discount_amount: Optional[Decimal] = None
     expiration_date: Optional[date] = None
     active: Optional[bool] = None
 

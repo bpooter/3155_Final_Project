@@ -2,30 +2,28 @@ from fastapi import HTTPException, status, Response
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import Session
 
-from ..models import promotions as model
-from ..schemas.promotions import PromotionCreate, PromotionUpdate
+from ..models import resources as model
+from ..schemas.resources import ResourceCreate, ResourceUpdate
 
 
-def create(request: PromotionCreate, db: Session):
+def create(request: ResourceCreate, db: Session):
 
-    new_promotion = model.Promotion(
-        promotion_code=request.promotion_code,
-        discount_type=request.discount_type,
-        discount_amount=request.discount_amount,
-        discount_item=request.discount_item,
-        expiration_date=request.expiration_date
+    new_resource = model.Resource(
+        item_name=request.item_name,
+        quantity_on_hand=request.quantity_on_hand,
+        unit=request.unit,
     )
 
     try:
-        db.add(new_promotion)
+        db.add(new_resource)
         db.commit()
-        db.refresh(new_promotion)
+        db.refresh(new_resource)
 
     except IntegrityError:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail= "Promotion code already exists"
+            detail= "Resource already exists"
         )
 
     except SQLAlchemyError as e:
@@ -35,55 +33,62 @@ def create(request: PromotionCreate, db: Session):
             detail=str(e)
         )
 
-    return new_promotion
+    return new_resource
 
 def read_all(db: Session):
-    return db.query(model.Promotion).all()
+    return db.query(model.Resource).all()
 
-def read_one(promotion_id: int, db: Session):
+def read_one(resource_id: int, db: Session):
 
-    promotion = (
-        db.query(model.Promotion)
-        .filter(model.Promotion.promotion_id == promotion_id)
+    resource = (
+        db.query(model.Resource)
+        .filter(model.Resource.resource_id == resource_id)
         .first()
     )
 
-    if not promotion:
+    if not resource:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Promotion with id {promotion_id} not found"
+            detail=f"Resource with id {resource_id} not found"
         )
 
-    return promotion
+    return resource
 
 def update(
-    promotion_id: int,
-    request: PromotionUpdate,
+    resource_id: int,
+    request: ResourceUpdate,
     db: Session
 ):
 
     try:
-        promotion = (
-            db.query(model.Promotion)
+        resource = (
+            db.query(model.Resource)
             .filter(
-                model.Promotion.promotion_id == promotion_id
+                model.Resource.resource_id == resource_id
             )
             .first()
         )
 
-        if not promotion:
+        if not resource:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Promotion not found"
+                detail="Resource not found"
             )
 
         update_data = request.model_dump(exclude_unset=True)
 
         for key, value in update_data.items():
-            setattr(promotion, key, value)
+            setattr(resource, key, value)
 
         db.commit()
-        db.refresh(promotion)
+        db.refresh(resource)
+
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Resource already exists"
+        )
 
     except SQLAlchemyError as e:
         db.rollback()
@@ -92,26 +97,26 @@ def update(
             detail=str(e)
         )
 
-    return promotion
+    return resource
 
-def delete(promotion_id: int, db: Session):
+def delete(resource_id: int, db: Session):
 
     try:
-        promotion = (
-            db.query(model.Promotion)
+        resource = (
+            db.query(model.Resource)
             .filter(
-                model.Promotion.promotion_id == promotion_id
+                model.Resource.resource_id == resource_id
             )
             .first()
         )
 
-        if not promotion:
+        if not resource:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Promotion not found"
+                detail="Resource not found"
             )
 
-        db.delete(promotion)
+        db.delete(resource)
         db.commit()
 
     except SQLAlchemyError as e:

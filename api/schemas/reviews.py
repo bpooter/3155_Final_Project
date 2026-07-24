@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class ReviewBase(BaseModel):
-    customer_id: int
+    customer_id: Optional[int] = None
     order_id: int
     rating: int = Field(ge=1, le=5)
     comment: Optional[str] = None

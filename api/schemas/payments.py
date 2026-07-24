@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from models.payments import PaymentType, TransactionStatus
+from ..models.payments import PaymentType, TransactionStatus
 
 
 class PaymentBase(BaseModel):
@@ -19,8 +19,9 @@ class PaymentCreate(PaymentBase):
     amount: Decimal
     card_last_four: Optional[str] = None
 
-class PaymentUpdate(PaymentBase):
+class PaymentUpdate(BaseModel):
     payment_type: Optional[PaymentType] = None
+    amount: Optional[Decimal] = None
     transaction_status: Optional[TransactionStatus] = None
     card_last_four: Optional[str] = None
 

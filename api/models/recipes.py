@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, DECIMAL
+from sqlalchemy import Column, ForeignKey, Integer, DECIMAL, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from ..dependencies.database import Base
@@ -6,6 +6,14 @@ from ..dependencies.database import Base
 
 class Recipe(Base):
     __tablename__ = "recipes"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "menu_item_id",
+            "resource_id",
+            name="unique_menu_item_resource"
+        ),
+    )
 
     recipe_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     menu_item_id = Column(Integer, ForeignKey("menu_items.menu_item_id"), nullable=False)

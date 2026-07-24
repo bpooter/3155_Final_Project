@@ -2,6 +2,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 from pydantic import BaseModel, Field
+
+from ..models.orders import OrderType, OrderStatus
 from .order_details import OrderDetail
 
 
@@ -11,6 +13,7 @@ class OrderBase(BaseModel):
     guest_name: Optional[str] = None
     guest_email: Optional[str] = None
     guest_phone: Optional[str] = None
+    order_type: OrderType = OrderType.TAKEOUT
     promotion_code: Optional[str] = None
 
 
@@ -22,12 +25,12 @@ class OrderUpdate(BaseModel):
     guest_name: Optional[str] = None
     guest_email: Optional[str] = None
     guest_phone: Optional[str] = None
-    order_status: Optional[str] = None
+    order_status: Optional[OrderStatus] = None
     promotion_code: Optional[str] = None
 
 class Order(OrderBase):
     order_id: int
-    customer_id: Optional[int] = None
+    tracking_number: str
     order_date: datetime
     order_status: str
     subtotal: Decimal
