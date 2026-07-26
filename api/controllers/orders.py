@@ -106,7 +106,7 @@ def update(db: Session, order_id, request):
 
         update_data = request.model_dump(exclude_unset=True)
 
-        # Convert promotion_code into promotion_id
+        # convert promotion_code into promotion_id
         if "promotion_code" in update_data:
             promotion_code = update_data.pop("promotion_code")
 
@@ -165,3 +165,26 @@ def delete(db: Session, order_id):
         )
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+def read_one_tracking_number(db, tracking_number):
+    try:
+        order = (
+            db.query(model.Order)
+            .filter(model.Order.tracking_number == tracking_number)
+            .first()
+        )
+
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Order not found!"
+            )
+
+    except SQLAlchemyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+    return order

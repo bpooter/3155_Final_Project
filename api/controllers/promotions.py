@@ -40,6 +40,15 @@ def create(request: PromotionCreate, db: Session):
 def read_all(db: Session):
     return db.query(model.Promotion).all()
 
+def read_by_code(promotion_code: str, db: Session):
+    return (
+        db.query(model.Promotion)
+        .filter(
+            model.Promotion.promotion_code == promotion_code
+        )
+        .first()
+    )
+
 def read_one(promotion_id: int, db: Session):
 
     promotion = (

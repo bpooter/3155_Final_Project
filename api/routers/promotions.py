@@ -24,6 +24,13 @@ def read_all(
 ):
     return controller.read_all(db=db)
 
+@router.get("/{promotion_code}", response_model=schema.Promotion)
+def read_by_code(
+        promotion_code: str,
+        db: Session = Depends(get_db)
+):
+    return controller.read_by_code(promotion_code=promotion_code, db=db)
+
 @router.get("/{promotion_id}", response_model=schema.Promotion)
 def read_one(
         promotion_id: int,

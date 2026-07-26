@@ -28,11 +28,19 @@ class OrderUpdate(BaseModel):
     order_status: Optional[OrderStatus] = None
     promotion_code: Optional[str] = None
 
+
+class OrderTracking(BaseModel):
+    tracking_number: str
+    order_status: OrderStatus
+    order_type: OrderType
+    order_date: datetime
+
+
 class Order(OrderBase):
     order_id: int
     tracking_number: str
     order_date: datetime
-    order_status: str
+    order_status: OrderStatus
     subtotal: Decimal
     discount_amount: Decimal
     total_price: Decimal

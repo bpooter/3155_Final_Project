@@ -9,7 +9,6 @@ from ..schemas.recipes import RecipeCreate, RecipeUpdate
 
 
 def create(request: RecipeCreate, db: Session):
-
     menu_item = (
         db.query(MenuItem)
         .filter(MenuItem.menu_item_id == request.menu_item_id)
@@ -61,11 +60,12 @@ def create(request: RecipeCreate, db: Session):
 
     return new_recipe
 
+
 def read_all(db: Session):
     return db.query(model.Recipe).all()
 
-def read_one(recipe_id: int, db: Session):
 
+def read_one(recipe_id: int, db: Session):
     recipe = (
         db.query(model.Recipe)
         .filter(model.Recipe.recipe_id == recipe_id)
@@ -80,12 +80,22 @@ def read_one(recipe_id: int, db: Session):
 
     return recipe
 
-def update(
-    recipe_id: int,
-    request: RecipeUpdate,
-    db: Session
-):
 
+def read_by_menu_item_id(menu_item_id: int, db: Session):
+
+    return (db.query(model.Recipe)
+            .filter(
+                model.Recipe.menu_item_id == menu_item_id
+            )
+            .all()
+            )
+
+
+def update(
+        recipe_id: int,
+        request: RecipeUpdate,
+        db: Session
+):
     try:
         recipe = (
             db.query(model.Recipe)
@@ -116,8 +126,8 @@ def update(
 
     return recipe
 
-def delete(recipe_id: int, db: Session):
 
+def delete(recipe_id: int, db: Session):
     try:
         recipe = (
             db.query(model.Recipe)
