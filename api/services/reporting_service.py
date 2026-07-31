@@ -3,10 +3,9 @@ from datetime import date
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from ..models.menu_items import MenuItem
-from ..models.order_details import OrderDetail
-from ..models.reviews import Review
 from ..models.orders import Order
+from ..models.reviews import Review
+
 
 def get_daily_revenue(db: Session, report_date: date):
     revenue = (

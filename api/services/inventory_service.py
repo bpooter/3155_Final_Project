@@ -13,7 +13,8 @@ def check_inventory(db, request):
             quantity_required = recipe.quantity_required * item.quantity
 
             if recipe.resource.quantity_on_hand < quantity_required:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Not enough {recipe.resource.item_name}")
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                    detail=f"Not enough {recipe.resource.item_name}")
 
 
 def deduct_inventory(db, request):

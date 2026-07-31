@@ -1,3 +1,4 @@
+from datetime import date
 from decimal import Decimal
 
 from fastapi import HTTPException, status
@@ -60,6 +61,9 @@ def apply_promotion(db, request, subtotal):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Promotion code is not active!"
         )
+
+    if promotion.expiration_date < date.today():
+        raise HTTPException(status_code=400, detail="Promotion has expired")
 
     if promotion.discount_type == DiscountType.PERCENTAGE:
         discount = (

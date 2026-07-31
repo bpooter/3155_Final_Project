@@ -83,12 +83,20 @@ def read_one(recipe_id: int, db: Session):
 
 def read_by_menu_item_id(menu_item_id: int, db: Session):
 
-    return (db.query(model.Recipe)
+    recipe = (db.query(model.Recipe)
             .filter(
                 model.Recipe.menu_item_id == menu_item_id
             )
             .all()
             )
+
+    if not recipe:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Recipe not found for menu item {menu_item_id}"
+        )
+    return recipe
+
 
 
 def update(

@@ -20,6 +20,7 @@ def test_validate_customer_guest():
 
     validate_customer(request)
 
+
 def test_validate_customer_both():
     request = CheckoutRequest(
         customer_id= 1,
@@ -33,6 +34,7 @@ def test_validate_customer_both():
     with pytest.raises(HTTPException):
         validate_customer(request)
 
+
 def test_validate_customer_account():
     request = CheckoutRequest(
         customer_id= 1,
@@ -44,6 +46,7 @@ def test_validate_customer_account():
     )
 
     validate_customer(request)
+
 
 def test_validate_customer_none():
     request = CheckoutRequest(
@@ -57,6 +60,7 @@ def test_validate_customer_none():
 
     with pytest.raises(HTTPException):
         validate_customer(request)
+
 
 def test_calculate_subtotal(mocker):
     request = CheckoutRequest(

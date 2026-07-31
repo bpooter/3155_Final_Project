@@ -38,16 +38,28 @@ def create(request: PromotionCreate, db: Session):
     return new_promotion
 
 def read_all(db: Session):
-    return db.query(model.Promotion).all()
+
+    try:
+        db.query(model.Promotion).all()
+    except SQLAlchemyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
 
 def read_by_code(promotion_code: str, db: Session):
-    return (
-        db.query(model.Promotion)
-        .filter(
-            model.Promotion.promotion_code == promotion_code
+
+    promotion = ((db.query(model.Promotion)
+    .filter(
+        model.Promotion.promotion_code == promotion_code))
+                 .first())
+    if not promotion:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Promotion not found!"
         )
-        .first()
-    )
+    return promotion
+
 
 def read_one(promotion_id: int, db: Session):
 

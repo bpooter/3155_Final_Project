@@ -116,3 +116,9 @@ class Order(Base):
         back_populates="order",
         uselist=False
     )
+
+    @property
+    def promotion_code(self):
+        if self.promotion:
+            return self.promotion.promotion_code
+        return None
