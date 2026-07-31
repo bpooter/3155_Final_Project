@@ -106,8 +106,14 @@ def update(db: Session, order_id, request):
 
         update_data = request.model_dump(exclude_unset=True)
 
-        # convert promotion_code into promotion_id
-        if "promotion_code" in update_data:
+        #remove placeholder values
+        update_data = {
+            key: value
+            for key, value in update_data.items()
+            if value not in [None, "string"]
+        }
+
+        if update_data.get("promotion_code"):
             promotion_code = update_data.pop("promotion_code")
 
             promotion = (
@@ -123,6 +129,8 @@ def update(db: Session, order_id, request):
                 )
 
             update_data["promotion_id"] = promotion.promotion_id
+        else:
+            update_data.pop("promotion_code", None)
 
         for key, value in update_data.items():
             setattr(order, key, value)

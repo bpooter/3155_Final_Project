@@ -16,7 +16,7 @@ def get_daily_revenue(db: Session, report_date: date):
         .scalar()
     )
 
-    return revenue or 0
+    return revenue
 
 def get_orders_by_date_range(db, start_date, end_date):
 
