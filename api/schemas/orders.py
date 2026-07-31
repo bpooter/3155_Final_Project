@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import Optional
 from pydantic import BaseModel, Field
 
+from ..models.payments import PaymentType
 from ..models.orders import OrderType, OrderStatus
 from .order_details import OrderDetail
 
@@ -15,6 +16,7 @@ class OrderBase(BaseModel):
     guest_phone: Optional[str] = None
     order_type: OrderType = OrderType.TAKEOUT
     promotion_code: Optional[str] = None
+    payment_type: Optional[PaymentType] = None
 
 
 class OrderCreate(OrderBase):

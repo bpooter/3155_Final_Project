@@ -122,3 +122,9 @@ class Order(Base):
         if self.promotion:
             return self.promotion.promotion_code
         return None
+
+    @property
+    def payment_type(self):
+        if self.payment:
+            return self.payment.payment_type
+        return None
